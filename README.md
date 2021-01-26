@@ -19,6 +19,6 @@
 3. `docker-compose up -d`
 4. `docker exec petsearch_app_1 migrate --seed`
 
-Проект будет доступен по адресу http://localhost
+
 ___
 
