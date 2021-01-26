@@ -1,0 +1,6 @@
+src/node_modules
+src/vendor
+src/.env
+**/Dockerfile
+src/public/storage
+.idea
