@@ -7,9 +7,6 @@ FROM php:7.4-fpm-alpine as builder
 # Устанавливаем рабочую папку
 WORKDIR /var/www
 
-# Установка nodejs
-RUN apk add --no-cache --virtual .build-deps nodejs npm
-
 # Установка composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php composer-setup.php --install-dir=/bin --filename=composer
@@ -18,12 +15,12 @@ RUN php -r "unlink('composer-setup.php');"
 # Мы устанавливаем зависимости отдельно от исходного кода, т.к. они как правило редко меняются и при изменении
 # исходного кода они будут подтягиваться из кеша докера.
 COPY ./src/composer.json ./src/composer.lock ./src/package.json ./src/package-lock.json /var/www/
-RUN composer install --no-autoloader --no-dev --ignore-platform-reqs && npm ci
+RUN composer install --no-autoloader --no-dev --ignore-platform-reqs 
 
 # Переносим исходный код приложения в builder, генерируем php autoload, собираем ассеты.
 # После сборки мы можем удалить node_modules, чтобы уменьшить размер конечного образа.
 COPY ./src/ /var/www/
-RUN composer dump-autoload && npm run prod && rm -rf /var/www/node_modules
+RUN composer dump-autoload 
 
 #####################################################################################################################
 #####################################################################################################################
@@ -46,14 +43,13 @@ RUN apk add --no-cache --virtual .build-deps  \
 	libwebp-tools \
     libxml2-dev \
     bzip2-dev \
-    libzip-dev \
-    mysql-client
+    libzip-dev     
 
 # Установка зависимостей laravel, включение модулей php, установка redis
 RUN docker-php-ext-configure zip
 RUN pecl install redis && docker-php-ext-enable redis
 RUN docker-php-ext-configure gd #--with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
-RUN docker-php-ext-install pdo pdo_mysql exif pcntl zip gd
+RUN docker-php-ext-install pdo exif pcntl zip gd
 
 # Установка composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
