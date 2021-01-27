@@ -47,7 +47,6 @@ RUN apk add --no-cache --virtual .build-deps  \
 
 # Установка зависимостей laravel, включение модулей php, установка redis
 RUN docker-php-ext-configure zip
-RUN pecl install redis && docker-php-ext-enable redis
 RUN docker-php-ext-configure gd #--with-gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ --with-png-dir=/usr/include/
 RUN docker-php-ext-install pdo exif pcntl zip gd
 
